@@ -30,7 +30,19 @@ All steps are idempotent — safe to run repeatedly.
 
 ## Quick start
 
-Copy one file to your Cerbo and run it:
+Run directly on the Cerbo without downloading:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/TechBlueprints/disable-victron-bluetooth/main/disable-victron-bluetooth.sh | sh
+```
+
+To restore:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/TechBlueprints/disable-victron-bluetooth/main/disable-victron-bluetooth.sh | sh -s -- --restore
+```
+
+Or copy a file to the Cerbo and run it:
 
 ```bash
 # Bash version

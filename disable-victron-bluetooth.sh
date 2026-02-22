@@ -121,22 +121,24 @@ restore_victron_ble() {
     done
 }
 
-if [ "$(basename "$0")" = "disable-victron-bluetooth.sh" ]; then
-    case "${1:-}" in
-        --restore|-r)
-            restore_victron_ble
-            ;;
-        --version|-v|-V)
-            echo "disable-victron-bluetooth $VERSION"
-            ;;
-        --help|-h)
-            echo "disable-victron-bluetooth $VERSION"
-            echo "Usage: $0 [--restore|--version]"
-            echo "  Disable (or restore) Victron's built-in BLE services on Venus OS."
-            echo "  Services: $SERVICES"
-            ;;
-        *)
-            disable_victron_ble
-            ;;
-    esac
-fi
+# If sourced, stop here — functions are available to the caller.
+# If executed directly or piped (wget | sh), fall through to main.
+return 0 2>/dev/null
+
+case "${1:-}" in
+    --restore|-r)
+        restore_victron_ble
+        ;;
+    --version|-v|-V)
+        echo "disable-victron-bluetooth $VERSION"
+        ;;
+    --help|-h)
+        echo "disable-victron-bluetooth $VERSION"
+        echo "Usage: $0 [--restore|--version]"
+        echo "  Disable (or restore) Victron's built-in BLE services on Venus OS."
+        echo "  Services: $SERVICES"
+        ;;
+    *)
+        disable_victron_ble
+        ;;
+esac
