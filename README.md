@@ -10,7 +10,7 @@ BLE service:
 
 | Service | Problem |
 |---|---|
-| `dbus-ble-sensors` | Holds BlueZ discovery sessions for ~15s every 20s, causing `org.bluez.Error.InProgress` for any other service trying to scan or connect on the same adapter. |
+| `dbus-ble-sensors` | Uses raw HCI sockets to scan, bypassing BlueZ entirely. This corrupts BlueZ's internal discovery state, causing `org.bluez.Error.InProgress` for any other service using the D-Bus API — even when `Discovering` is `False`. The corruption is continuous (re-applied every 10 seconds) and the only recovery is an adapter power-cycle or bluetoothd restart, both of which drop all BLE connections. |
 | `vesmart-server` | Forcibly disconnects **all** BLE devices every ~60 seconds and runs its own scan cycle, causing further InProgress collisions and connection drops. |
 
 Upstream issues:
@@ -20,12 +20,19 @@ Upstream issues:
 
 ## What it does
 
-For each service:
+1. **Saves current D-Bus settings** (`/Settings/Services/BleSensors` and
+   `/Settings/Services/Bluetooth`) to `/data/disable-victron-bluetooth.state`
+2. **Disables both services in the Venus OS UI** via D-Bus (sets to 0)
+3. **Stops** each service if running (`svc -d`)
+4. **Makes run/start scripts non-executable** so they can't be restarted
+   by daemontools or the `bt-config` udev hotplug script
 
-1. **Stops** the service if running (`svc -d`)
-2. **Removes supervision** so daemontools won't restart it
-3. **Makes the run script non-executable** so it stays disabled across reboots
+`--restore` reverses all of this: re-enables the scripts, starts the
+services, and restores the D-Bus settings to their **original values**
+(read from the saved state file, not hardcoded).
 
+The root partition is read-only on Venus OS — the script temporarily
+remounts it read-write, modifies the scripts, and restores read-only.
 All steps are idempotent — safe to run repeatedly.
 
 ## Quick start
