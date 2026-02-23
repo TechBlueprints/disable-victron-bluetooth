@@ -108,6 +108,10 @@ re-enables these services. You should call `disable_victron_ble` on boot
 (e.g., from `/data/rc.local` or from your service's install script) to
 keep them disabled after updates.
 
+See [Venus OS: Root Access](https://www.victronenergy.com/live/ccgx:root_access)
+for full details on customizing a GX device, boot hooks, the read-only
+rootfs, and creating persistent patches.
+
 ## Development
 
 A non-production Cerbo GX (`einstein`) is available for testing at
