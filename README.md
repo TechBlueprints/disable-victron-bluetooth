@@ -108,6 +108,20 @@ re-enables these services. You should call `disable_victron_ble` on boot
 (e.g., from `/data/rc.local` or from your service's install script) to
 keep them disabled after updates.
 
+## Development
+
+A non-production Cerbo GX (`einstein`) is available for testing at
+`root@dev-cerbo`. Use this for rapid iteration when physical device
+access isn't needed — it runs the same Venus OS and service stack as
+production units but can be freely modified without risk.
+
+```bash
+ssh root@dev-cerbo
+```
+
+The production Cerbo (`root@cerbo`) should only be used for final
+validation.
+
 ## License
 
 Apache License 2.0 — see [LICENSE](LICENSE).
